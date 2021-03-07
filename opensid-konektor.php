@@ -54,10 +54,8 @@ class OpenSID_Konektor
 
     public function notice_konektor_state()
     {
-        printf( '<div class="error notice"><p>
-    <b>OpenSID Konektor Error</b><br/>
-    %s<br/>
-    <a href="/wp-admin/options-general.php?page=%s">Ubah Pengaturan</a>
+        printf( '<div class="error notice"><h2>OpenSID Konektor Error</h2><p>
+    %s<br/><a href="/wp-admin/options-general.php?page=%s">Ubah Pengaturan</a>
     </p></div>', $this->konektor_state, self::$name );
     }
 
@@ -117,7 +115,7 @@ class OpenSID_Konektor
             } else {
                 $this->konektor_state = 'Invalid Konektor Type!';
             }
-            if ( $this->konektor_state == true ) {
+            if ( $this->konektor_state === true ) {
                 echo '<div class="notice-success notice"><p>Berhasil terhubung dengan Aplikasi OpenSID</div>';
             } else {
                 $this->notice_konektor_state();

@@ -9,6 +9,18 @@
                 </td>
             </tr>
             <tr>
+                <th>User Pict Path</th>
+                <td>
+                    <input type="text" name="opensid[foto_path]" value="<?php echo esc_attr(@self::$config['opensid']['foto_path']) ?>"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Foto Default</th>
+                <td>
+                    <input type="text" name="opensid[foto_default]" value="<?php echo esc_attr(@self::$config['opensid']['foto_default']) ?>"/>
+                </td>
+            </tr>
+            <tr>
                 <th>Jenis Koneksi</th>
                 <td>
                     <select id="opensid-konektor-type" name="konektor[type]">

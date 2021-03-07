@@ -34,8 +34,17 @@ class OpenSID_Konektor_DB extends OpenSID
 
     function listAparat()
     {
-        $ret = $this->db->query( "SELECT * from tweb_desa_pamong" );
-        $data = $ret->fetch_all( MYSQLI_ASSOC );
+        $ret = $this->db->query( "SELECT * from tweb_desa_pamong where pamong_status = 1" );
+        $data = [];
+        foreach ( $ret->fetch_all( MYSQLI_ASSOC ) as $row ) {
+            $data[] = [
+                'nama' => $row['pamong_nama'],
+                'nik' => $row['pamong_nik'],
+                'jabatan' => $row['jabatan'],
+                'foto' => $this->getFotoUrl($row['foto'])
+            ];
+
+        }
         $ret->free();
         return $data;
     }

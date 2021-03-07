@@ -4,6 +4,8 @@ $opensid_konektor_default_config = [
     'version' => OpenSID_Konektor::$version,
     'opensid' => [
         'url' => '',
+        'foto_path' => '/desa/upload/user_pict/',
+        'foto_default' => '/assets/files/user_pict/kuser.png',
     ],
     'konektor' => [
         'type' => "db",
