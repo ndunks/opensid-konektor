@@ -5,5 +5,6 @@
 abstract class OpenSID
 {
     abstract function __construct( $config );
+    abstract function connect();
     abstract function listAparat();
 }

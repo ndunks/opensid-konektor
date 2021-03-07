@@ -7,8 +7,7 @@
  * Author URI: http://klampok.id/
  */
 
-define( 'OPENSID_KONEKTOR_DIR', plugin_dir_path( __FILE__ ) );
-define( 'OPENSID_KONEKTOR_URL', plugins_url( '', __FILE__ ) . '/' );
+define( 'OPENSID_KONEKTOR', plugin_dir_path( __FILE__ ) );
 
 class OpenSID_Konektor
 {
@@ -16,8 +15,8 @@ class OpenSID_Konektor
     public static $name = 'opensid-konektor';
     public static $version = '1.0.0';
     public static $me = null;
-    public static $konektor = null;
     public static $config = null;
+    private $konektor_state = null;
 
     public function __construct()
     {
@@ -30,19 +29,36 @@ class OpenSID_Konektor
         }
 
         if ( empty( self::$config ) || self::$config['version'] != self::$version ) {
-            include OPENSID_KONEKTOR_DIR . 'upgrade.php';
+            include OPENSID_KONEKTOR . 'upgrade.php';
         }
-        $konektor = OPENSID_KONEKTOR_DIR . 'konektor/' . self::$config['konektor']['type'] . '/driver.php';
 
-        if ( file_exists( $konektor ) ) {
-            include OPENSID_KONEKTOR_DIR . 'opensid.php';
-            self::$konektor = include $konektor;
+        // don't do in setting page, will test later
+        if ( @$_GET['page'] != self::$name ) {
+            $driver = OPENSID_KONEKTOR . 'konektor/' . self::$config['konektor']['type'] . '/driver.php';
+            if ( file_exists( $driver ) ) {
+                include OPENSID_KONEKTOR . 'opensid.php';
+                $konektor = include $driver;
+                $this->konektor_state = @$konektor->connect();
+                if ( $this->konektor_state !== true ) {
+                    add_action( 'admin_notices', [$this, 'notice_konektor_state'] );
+                }
+                $GLOBALS['OpenSID'] = $konektor;
+            }
         }
     }
 
     public function init()
     {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+    }
+
+    public function notice_konektor_state()
+    {
+        printf( '<div class="error notice"><p>
+    <b>OpenSID Konektor Error</b><br/>
+    %s<br/>
+    <a href="/wp-admin/options-general.php?page=%s">Ubah Pengaturan</a>
+    </p></div>', $this->konektor_state, self::$name );
     }
 
     public function ajax_setting()
@@ -57,7 +73,7 @@ class OpenSID_Konektor
             $setting = [];
         }
 
-        $konektor_setting = OPENSID_KONEKTOR_DIR . 'konektor/' . self::$config['konektor']['type'] . '/setting.php';
+        $konektor_setting = OPENSID_KONEKTOR . 'konektor/' . self::$config['konektor']['type'] . '/setting.php';
 
         if ( file_exists( $konektor_setting ) ) {
             include $konektor_setting;
@@ -74,7 +90,7 @@ class OpenSID_Konektor
             'Pengaturan OpenSID Konektor',
             'OpenSID Konektor',
             'administrator',
-            'opensid-konektor',
+            self::$name,
             array( $this, 'setting' ) );
     }
 
@@ -91,14 +107,27 @@ class OpenSID_Konektor
                 "_______________" );
             self::$config['konektor'] = $_POST['konektor'];
             update_option( self::$name, self::$config, true );
+            // Test the setting
+            $driver = OPENSID_KONEKTOR . 'konektor/' . self::$config['konektor']['type'] . '/driver.php';
+            if ( file_exists( $driver ) ) {
+                include OPENSID_KONEKTOR . 'opensid.php';
+                $konektor = include $driver;
+                $this->konektor_state = @$konektor->connect();
+            } else {
+                $this->konektor_state = 'Invalid Konektor Type!';
+            }
+            if ( $this->konektor_state == true ) {
+                echo '<div class="notice-success notice"><p>Berhasil terhubung dengan Aplikasi OpenSID</div>';
+            } else {
+                $this->notice_konektor_state();
+            }
         }
 
-        include OPENSID_KONEKTOR_DIR . 'setting.php';
+        include OPENSID_KONEKTOR . 'setting.php';
     }
 
 }
 
 if ( is_null( OpenSID_Konektor::$me ) ) {
     OpenSID_Konektor::$me = new OpenSID_Konektor();
-    $GLOBALS['OpenSID'] = OpenSID_Konektor::$konektor;
 }
