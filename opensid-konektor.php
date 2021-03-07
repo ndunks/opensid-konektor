@@ -106,6 +106,7 @@ class OpenSID_Konektor
                 ".,=:$@*~%&^!/|\\",
                 "_______________" );
             self::$config['konektor'] = $_POST['konektor'];
+            self::$config['opensid'] = $_POST['opensid'];
             update_option( self::$name, self::$config, true );
             // Test the setting
             $driver = OPENSID_KONEKTOR . 'konektor/' . self::$config['konektor']['type'] . '/driver.php';

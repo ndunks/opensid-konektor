@@ -2,10 +2,13 @@
 
 $opensid_konektor_default_config = [
     'version' => OpenSID_Konektor::$version,
+    'opensid' => [
+        'url' => '',
+    ],
     'konektor' => [
         'type' => "db",
         'setting' => [
-            "host" => "localhost"
+            "host" => "localhost",
         ],
     ],
 ];

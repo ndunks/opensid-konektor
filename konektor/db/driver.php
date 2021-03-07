@@ -4,7 +4,7 @@ class OpenSID_Konektor_DB extends OpenSID
 {
     public $config = [];
     /**
-     * @type {mysqli}
+     * @var mysqli
      */
     public $db;
 
@@ -34,7 +34,10 @@ class OpenSID_Konektor_DB extends OpenSID
 
     function listAparat()
     {
-        return ['APARAT'];
+        $ret = $this->db->query( "SELECT * from tweb_desa_pamong" );
+        $data = $ret->fetch_all( MYSQLI_ASSOC );
+        $ret->free();
+        return $data;
     }
 }
 return new OpenSID_Konektor_DB( self::$config );

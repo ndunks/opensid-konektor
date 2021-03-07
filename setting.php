@@ -3,6 +3,12 @@
     <table class="form-table">
         <tbody>
             <tr>
+                <th>Alamat Web OpenSID</th>
+                <td>
+                    <input type="text" name="opensid[url]" value="<?php echo esc_attr(@self::$config['opensid']['url']) ?>"/>
+                </td>
+            </tr>
+            <tr>
                 <th>Jenis Koneksi</th>
                 <td>
                     <select id="opensid-konektor-type" name="konektor[type]">
