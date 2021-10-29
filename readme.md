@@ -1,4 +1,4 @@
-# OpenSID Konektor
+# Wordpress Plugin: OpenSID Konektor
 
 Plugin untuk menghubungkan antara plugin atau tema Wordpress denga data OpenSID.
 
