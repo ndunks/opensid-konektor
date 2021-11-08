@@ -47,9 +47,21 @@ class OpenSID_Konektor
         }
     }
 
+    public function filter_callback($value){
+        $value[] = [
+            'name' => self::$name,
+            'title' => self::$title,
+            'file' => __FILE__,
+            'update_git' => true,
+            'version' => self::$version,
+        ];
+        return $value;
+    }
+
     public function init()
     {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        add_filter( 'opensid_extensions', [$this, 'filter_callback'], 1 );
     }
 
     public function notice_konektor_state()
@@ -120,6 +132,85 @@ class OpenSID_Konektor
             } else {
                 $this->notice_konektor_state();
             }
+            // No return, keep display the setting page
+        }elseif ( isset($_GET['update_git'])) {
+            $plugin_name = $_GET['update_git'];
+            $plugin = null;
+            $items = apply_filters( "opensid_extensions", [] );
+            $restore_cwd = getcwd();
+            ob_start();
+            do {
+                foreach($items as $key => $item ){
+                    if(@$item['name'] == $plugin_name){
+                        $plugin = $item;
+                        break;
+                    }
+                }
+                if(!$plugin){
+                    echo '<h3>Plugin not found</h3>';
+                    break;
+                }
+
+                if(!function_exists('system')){
+                    echo '<h3>Failed</h3>';
+                    echo '<p><b><code>system()</code></b> function is disabled.</p>';
+                    break;
+                }
+
+                $dir = dirname($plugin['file']);
+                if(!is_dir($dir)){
+                    echo '<h3>Invalid plugin directory.</h3>';
+                    break;
+                }
+                chdir($dir);
+    
+                $ret = -1;
+                system('which git > /dev/null', $ret);
+                if($ret != 0){
+                    echo '<h3>Error, GIT binary not found in server.</h3>';
+                    break;
+                }
+                $git_remote = @$plugin['git_remote'] ?: 'origin';
+                $git_branch = @$plugin['git_branch'] ?: 'master';
+                // Warn command injection
+                $command_lists = [
+                    "git --version",
+                    "git log --oneline -n 1",
+                    "git fetch --no-tags $git_remote $git_branch",
+                    "git log --oneline -n 1",
+                    "git reset --hard $git_branch",
+                    "git clean -fdn",
+                    // echo "Run bellow command to clean"
+                    // echo "git clean -fd"
+                    "git status"
+                ];
+
+                foreach($command_lists as $k => $cmd) {
+                    echo "<b>-> $cmd</b>\n";
+                    system("$cmd 2>&1", $ret);
+                    if($ret != 0){
+                        echo "<h3>(!) Failed, return <b>$ret</b></h3>";
+                        break;
+                    }
+                }
+                
+
+            }while(false);
+            $result = ob_get_clean();
+            chdir($restore_cwd);
+            $link = esc_url( add_query_arg(
+                [
+                    'page' => $_GET['page'],
+                ],
+                get_admin_url() . 'options-general.php?'
+            ) );
+
+            echo '<h1>Updating with git</h1>';
+            echo '<pre>';
+            echo $result;
+            echo '</pre>';
+            echo '<h3><a href="' . $link . '">Back</a></h3>';
+            return;
         }
 
         include OPENSID_KONEKTOR . 'setting.php';

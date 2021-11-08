@@ -1,6 +1,7 @@
 <form method="POST">
     <h1>Pengaturan OpenSID Konektor</h1>
     <table class="form-table">
+        <thead><tr><th colspan="2">Koneksi Data OpenSID</th></tr></thead>
         <tbody>
             <tr>
                 <th>Alamat Web OpenSID</th>
@@ -43,8 +44,6 @@
     jQuery(function ($) {
         function load_konektor_setting() {
             var selected = $('#opensid-konektor-type').val();
-            console.log("LOAD KONEKTOR SETTINGS");
-
             $.post("<?php echo admin_url( 'admin-ajax.php' ) ?>", {
                 action: 'opensid_konektor_setting',
                 nonce: $('#opensid-konektor-nonce').val(),
@@ -57,3 +56,33 @@
         load_konektor_setting();
     })
 </script>
+<?php
+    $items = apply_filters( "opensid_extensions", [] );
+    $total = count($items);
+?>
+<table class="form-table extension-setting">
+    <thead><tr><th colspan="3">Pembaruan &amp; Ekstensi (<?= $total ?>)</th></tr></thead>
+    <tbody>
+        <?php foreach ($items as $key => $item): 
+        if( @$item['update_git'] ){
+            $link = esc_url( add_query_arg(
+                [
+                    'page' => $_GET['page'],
+                    'update_git' => $item['name']
+                ],
+                get_admin_url() . 'options-general.php?'
+            ) );
+        }else{
+            $link = plugin_dir_url( $item['file'] ) . $item['update_link'];
+        }
+        ?>
+        <tr>
+            <td><?php echo esc_html( $item['title']) ?></td>
+            <td><code><?php echo esc_html( $item['version']) ?></code></td>
+            <td>
+                <a href="<?php echo esc_attr( $link ) ?>">Check &amp; Update</a>
+            </td>
+        </tr>
+        <?php endforeach ?>
+    </tbody>
+</table>
