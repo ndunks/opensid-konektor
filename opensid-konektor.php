@@ -174,7 +174,7 @@ class OpenSID_Konektor
                 $git_branch = @$plugin['git_branch'] ?: 'master';
                 $cmd_prefix = '';
                 if( null != @$_GET['runas']){
-                    $cmd_prefix = 'sudo -u "' . escapeshellarg($_GET['runas']) . '" ';
+                    $cmd_prefix = 'sudo -u ' . escapeshellarg($_GET['runas']) . ' ';
                 }
                 // Warn command injection
                 $command_lists = [
