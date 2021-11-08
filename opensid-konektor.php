@@ -215,7 +215,16 @@ class OpenSID_Konektor
             echo '</pre>';
             
             if($ret != 0){
-                echo '<p><i>TIPS:</i> Add <code>&amp;runas=admin</code> to run as other user.</p>';
+                $link = esc_url( add_query_arg(
+                    [
+                        'page' => $_GET['page'],
+                        'update_git' => $_GET['update_git'],
+                        'runas' => 'admin'
+                    ],
+                    get_admin_url() . 'options-general.php?'
+                ) );
+                echo '<p><i>TIPS:</i> Add <a href="' . $link .
+                    '"><code>&amp;runas=admin</code></a> to run as admin.</p>';
             }
 
             echo '<h3><a href="' . $link . '">Back</a></h3>';
