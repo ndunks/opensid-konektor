@@ -179,11 +179,11 @@ class OpenSID_Konektor
                 // Warn command injection
                 $command_lists = [
                     "$cmd_prefix git --version",
-                    "$cmd_prefix git log --oneline -n 1",
-                    "$cmd_prefix git fetch --no-tags $git_remote $git_branch",
-                    "$cmd_prefix git log --oneline -n 1",
-                    "$cmd_prefix git reset --hard $git_branch",
-                    "$cmd_prefix git clean -fdn",
+                    // "$cmd_prefix git log --oneline -n 1",
+                    "$cmd_prefix git pull $git_remote $git_branch",
+                    // "$cmd_prefix git log --oneline -n 1",
+                    // "$cmd_prefix git reset --hard $git_branch",
+                    // "$cmd_prefix git clean -fdn",
                     // echo "Run bellow command to clean"
                     // echo "$cmd_prefix git clean -fd"
                     "$cmd_prefix git status"
