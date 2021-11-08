@@ -172,17 +172,21 @@ class OpenSID_Konektor
                 }
                 $git_remote = @$plugin['git_remote'] ?: 'origin';
                 $git_branch = @$plugin['git_branch'] ?: 'master';
+                $cmd_prefix = '';
+                if( null != @$_GET['runas']){
+                    $cmd_prefix = 'sudo -u "' . escapeshellarg($_GET['runas']) . '" ';
+                }
                 // Warn command injection
                 $command_lists = [
-                    "git --version",
-                    "git log --oneline -n 1",
-                    "git fetch --no-tags $git_remote $git_branch",
-                    "git log --oneline -n 1",
-                    "git reset --hard $git_branch",
-                    "git clean -fdn",
+                    "$cmd_prefix git --version",
+                    "$cmd_prefix git log --oneline -n 1",
+                    "$cmd_prefix git fetch --no-tags $git_remote $git_branch",
+                    "$cmd_prefix git log --oneline -n 1",
+                    "$cmd_prefix git reset --hard $git_branch",
+                    "$cmd_prefix git clean -fdn",
                     // echo "Run bellow command to clean"
-                    // echo "git clean -fd"
-                    "git status"
+                    // echo "$cmd_prefix git clean -fd"
+                    "$cmd_prefix git status"
                 ];
 
                 foreach($command_lists as $k => $cmd) {
@@ -209,6 +213,11 @@ class OpenSID_Konektor
             echo '<pre>';
             echo $result;
             echo '</pre>';
+            
+            if($ret != 0){
+                echo '<p><i>TIPS:</i> Add <code>&amp;runas=admin</code> to run as other user.</p>';
+            }
+
             echo '<h3><a href="' . $link . '">Back</a></h3>';
             return;
         }
