@@ -162,7 +162,10 @@ class OpenSID_Konektor
                     echo '<h3>Invalid plugin directory.</h3>';
                     break;
                 }
-                chdir($dir);
+                if ( ! chdir($dir) ) {
+                    echo '<h3>Cannot chdir to ' . $dir . '.</h3>';
+                    break;
+                }
     
                 $ret = -1;
                 system('which git > /dev/null', $ret);
@@ -201,13 +204,7 @@ class OpenSID_Konektor
             }while(false);
             $result = ob_get_clean();
             chdir($restore_cwd);
-            $link = esc_url( add_query_arg(
-                [
-                    'page' => $_GET['page'],
-                ],
-                get_admin_url() . 'options-general.php?'
-            ) );
-
+            
             echo '<h1>Updating with git</h1>';
             echo '<pre>';
             echo $result;
@@ -221,11 +218,17 @@ class OpenSID_Konektor
                         'runas' => 'admin'
                     ],
                     get_admin_url() . 'options-general.php?'
-                ) );
+                    ) );
                 echo '<p><i>TIPS:</i> Add <a href="' . $link .
-                    '"><code>&amp;runas=admin</code></a> to run as admin.</p>';
+                '"><code>&amp;runas=admin</code></a> to run as admin.</p>';
             }
-
+                
+            $link = esc_url( add_query_arg(
+                [
+                    'page' => $_GET['page'],
+                ],
+                get_admin_url() . 'options-general.php?'
+            ) );
             echo '<h3><a href="' . $link . '">Back</a></h3>';
             return;
         }
