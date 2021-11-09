@@ -186,7 +186,7 @@ class OpenSID_Konektor
                     // "$cmd_prefix git clean -fdn",
                     // echo "Run bellow command to clean"
                     // echo "$cmd_prefix git clean -fd"
-                    "$cmd_prefix git status"
+                    // "$cmd_prefix git status"
                 ];
 
                 foreach($command_lists as $k => $cmd) {
