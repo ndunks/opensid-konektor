@@ -170,13 +170,12 @@ class OpenSID_Konektor
                     echo '<h3>Error, GIT binary not found in server.</h3>';
                     break;
                 }
-                $git_remote = @$plugin['git_remote'] ?: 'origin';
-                $git_branch = @$plugin['git_branch'] ?: 'master';
+                $git_remote = escapeshellarg( @$plugin['git_remote'] ?: 'origin' );
+                $git_branch = escapeshellarg( @$plugin['git_branch'] ?: 'master' );
                 $cmd_prefix = '';
                 if( null != @$_GET['runas']){
                     $cmd_prefix = 'sudo -u ' . escapeshellarg($_GET['runas']) . ' ';
                 }
-                // Warn command injection
                 $command_lists = [
                     "$cmd_prefix git --version",
                     // "$cmd_prefix git log --oneline -n 1",
